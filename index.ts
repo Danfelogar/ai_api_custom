@@ -12,9 +12,9 @@ const services: AIService[] = [
 let currentServiceIndex = 0;
 
 function getNextService() {
-  const nextServiceIndex = (currentServiceIndex + 1) % services.length;
-  currentServiceIndex = nextServiceIndex;
-  return services[nextServiceIndex];
+  const service = services[currentServiceIndex];
+  currentServiceIndex = (currentServiceIndex + 1) % services.length;
+  return service;
 }
 
 const server = Bun.serve({
@@ -22,10 +22,32 @@ const server = Bun.serve({
   async fetch(req) {
     const { pathname } = new URL(req.url);
 
+    if (req.method === "GET" && pathname === "/") {
+      return new Response(
+        JSON.stringify({
+          status: "success",
+          message: "✅ Connection OK - Multi API AI Server",
+          version: "1.0.0",
+          availableServices: services.map((s) => s.name),
+          endpoints: {
+            health: "GET /",
+            chat: "POST /chat",
+          },
+          timestamp: new Date().toISOString(),
+        }),
+        {
+          status: 200,
+          headers: {
+            "Content-Type": "application/json",
+          },
+        }
+      );
+    }
+
     if (req.method === "POST" && pathname === "/chat") {
-      const { message } = (await req.json()) as { message: ChatMessage[] };
+      const { messages } = (await req.json()) as { messages: ChatMessage[] };
       const service = getNextService();
-      const stream = await service?.chat(message);
+      const stream = await service?.chat(messages);
 
       console.log(`Using ${service?.name} service`);
       return new Response(stream, {
