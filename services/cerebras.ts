@@ -2,7 +2,7 @@ import Cerebras from "@cerebras/cerebras_cloud_sdk";
 import type { AIService, ChatMessage } from "../types";
 
 const cerebras = new Cerebras({
-  apiKey: process.env.CEREBRA_API_KEY,
+  apiKey: process.env.CEREBRAS_API_KEY,
 });
 
 export const cerebrasService: AIService = {
@@ -13,7 +13,7 @@ export const cerebrasService: AIService = {
       messages: messages as any,
       model: "zai-glm-4.6",
       stream: true,
-      max_completion_tokens: 32768,
+      max_completion_tokens: 40960,
       temperature: 0.6,
       top_p: 0.95,
     });
