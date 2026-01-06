@@ -1,9 +1,7 @@
 import Cerebras from "@cerebras/cerebras_cloud_sdk";
 import type { AIService, ChatMessage } from "../types";
 
-const cerebras = new Cerebras({
-  apiKey: process.env.CEREBRAS_API_KEY,
-});
+const cerebras = new Cerebras();
 
 export const cerebrasService: AIService = {
   name: "Cerebras",
